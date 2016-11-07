@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<body>
+	<button type="button" id="search_button">Search</button>
+</body>
+
+<script>
+    var searching = document.getElementById('search_button');
+    searching.addEventListener('click', function(element) {
+        var httpRequest = new XMLHttpRequest();
+        httpRequest.open('GET', 'request.php?q=definition');
+        httpRequest.onload = function() {
+            if (httpRequest.status === 200) {
+                alert(httpRequest.responseText);
+            }
+            else {
+                alert('There was a problem with the request.');
+            }
+    };
+    httpRequest.send();
+    });
+</script>
+
+</html>
