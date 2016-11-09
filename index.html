@@ -1,12 +1,16 @@
 <!DOCTYPE html>
 <html>
 <body>
+	<h1 style="background-color:#cc66ff;"><br>Web Dictionary<br><br></h1>
+	<p>Welcome to the web dictionary! You may enter a word and press search or view all definitions.</p>
 	<input type="text" id="word">
 	<button type="button" id="search_button">Search</button>
+	<button type="button" id="everything">Get All Definitions</button>
 	<div id="result"></div>
 </body>
 
 <script>
+window.onload = function() {
     var searching = document.getElementById("search_button");
     searching.addEventListener("click", function(element) {
         var httpRequest = new XMLHttpRequest();
@@ -23,10 +27,52 @@
             }; 
         }    
         else{
-            alert("Definition not found");       
+            alert("Definition not found");  
         }
     httpRequest.send();
     });
-</script>
+    
+    var everythingBtn = document.querySelector('#everything');
+    
+    everythingBtn.addEventListener('click', function() {
+        var httpRequest = new XMLHttpRequest();
+        var url = "request.php?=&all=true";
+        httpRequest.onreadystatechange = everything;
+        httpRequest.open('GET', url);
+        httpRequest.send();
 
+        function everything() {
+            if (httpRequest.readyState === XMLHttpRequest.DONE) {
+              if (httpRequest.status === 200) {
+                var response = httpRequest.responseXML;
+                var result = document.querySelector('#result');
+                var entries = response.getElementsByTagName('definition');
+
+                var all_definitions = document.createElement('ol');
+                result.appendChild(all_definitions);
+                for (var x = 0; x < entries.length; x++) {
+                    var definition = document.createElement('li');
+                    var definition1 = document.createElement('h3');
+                    var definition2 = document.createElement('p');
+                    var definition3 = document.createElement('p');
+                    var name = document.createTextNode(entries[x].getAttribute("name"));
+                    var text = document.createTextNode(entries[x].childNodes[0].nodeValue);
+                    var author = document.createTextNode(entries[x].getAttribute("author"));
+                    definition1.appendChild(name);
+                    definition2.appendChild(text);
+                    definition3.appendChild(author);
+                    definition.appendChild(definition1);
+                    definition.appendChild(definition2);
+                    definition.appendChild(definition3);
+                    all_definitions.appendChild(definition);
+                }
+              } 
+              else {
+                alert('There was a problem with the request.');
+              }
+            }
+        }
+    });
+};
+</script>
 </html>
